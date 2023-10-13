@@ -1,16 +1,17 @@
 import {useState} from 'react'
 
-function Square({ value, onSquareClick }) {
+function Square({ value, onSquareClick, shouldHighlight }) {
   return (
-    <button className="square" onClick={onSquareClick}>
+    <button className={shouldHighlight?'highlight square':'square'} onClick={onSquareClick}>
       {value}
     </button>
   )
 }
 
 function Board({ xIsNext, squares, onPlay }) {
+  let victoryLines = null
   function handleClick(i) {
-    if (squares[i] || calculateWinner(squares)) {
+    if (squares[i] || calculateWinner()) {
       return
     }
     const nextSquares = squares.slice()
@@ -22,10 +23,32 @@ function Board({ xIsNext, squares, onPlay }) {
     onPlay(nextSquares)
   }
 
-  const winner = calculateWinner(squares);
+  function calculateWinner() {
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6]
+    ];
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        victoryLines = lines[i]
+        return squares[a];
+      }
+    }
+    return null;
+  }
+
+  const winner = calculateWinner();
   let status;
   if (winner) {
     status = "Winner: " + winner;
+    console.log(victoryLines)
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
@@ -36,7 +59,7 @@ function Board({ xIsNext, squares, onPlay }) {
     {rows.map(row => (
         <div key={row} className="board-row">
           {rows.map((col, colId) => (
-            <Square key={colId} value={squares[colId+row]} onSquareClick={() => handleClick(colId+row)} />
+            <Square key={colId} shouldHighlight={victoryLines && victoryLines.includes(colId+row)} value={squares[colId+row]} onSquareClick={() => handleClick(colId+row)} />
           ))}
         </div>
       )
@@ -95,24 +118,4 @@ export default function Game() {
       </div>
     </div>
   )
-}
-
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
-    }
-  }
-  return null;
 }
