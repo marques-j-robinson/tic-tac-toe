@@ -48,7 +48,6 @@ function Board({ xIsNext, squares, onPlay }) {
   let status;
   if (winner) {
     status = "Winner: " + winner;
-    console.log(victoryLines)
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
