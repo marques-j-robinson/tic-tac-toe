@@ -1,9 +1,3 @@
-function App() {
-  return (
-    <div>
-      Hello, World!
-    </div>
-  );
+export default function Square() {
+  return <button className="square">X</button>;
 }
-
-export default App;
