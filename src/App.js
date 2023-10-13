@@ -58,7 +58,7 @@ function Board({ xIsNext, squares, onPlay }) {
   if (winner) {
     status = "Winner: " + winner;
   } else if (isDraw()) {
-    status = "Game ends in a draw!"
+    status = "Game ends in a draw 🐱!"
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
