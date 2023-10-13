@@ -44,10 +44,21 @@ function Board({ xIsNext, squares, onPlay }) {
     return null;
   }
 
+  function isDraw() {
+    for (let i = 0; i<9; i++) {
+      if (!squares[i]) {
+        return false
+      }
+    }
+    return true
+  }
+
   const winner = calculateWinner();
   let status;
   if (winner) {
     status = "Winner: " + winner;
+  } else if (isDraw()) {
+    status = "Game ends in a draw!"
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
