@@ -1,8 +1,8 @@
 import {useState} from 'react'
 
-function Square({ value, onSquareClick, shouldHighlight }) {
+function Square({ value, onSquareClick, isHighlight }) {
   return (
-    <button className={shouldHighlight?'highlight square':'square'} onClick={onSquareClick}>
+    <button className={`square ${isHighlight?'highlight':null}`} onClick={onSquareClick}>
       {value}
     </button>
   )
@@ -72,9 +72,9 @@ function Board({ xIsNext, squares, onPlay, moveLocations, setMoveLocations }) {
           {rows.map((col, colId) => (
             <Square
               key={colId}
-              shouldHighlight={victoryLines && victoryLines.includes(colId+row)}
               value={squares[colId+row].val}
               onSquareClick={() => handleClick(colId+row)}
+              isHighlight={victoryLines && victoryLines.includes(colId+row)}
             />
           ))}
         </div>
