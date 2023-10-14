@@ -8,18 +8,19 @@ function Square({ value, onSquareClick, shouldHighlight }) {
   )
 }
 
-function Board({ xIsNext, squares, onPlay }) {
+function Board({ xIsNext, squares, onPlay, moveLocations, setMoveLocations }) {
   let victoryLines = null
   function handleClick(i) {
-    if (squares[i] || calculateWinner()) {
+    if (squares[i].val || calculateWinner()) {
       return
     }
     const nextSquares = squares.slice()
     if (xIsNext) {
-      nextSquares[i] = 'X'
+      nextSquares[i].val = 'X'
     } else {
-      nextSquares[i] = 'O'
+      nextSquares[i].val = 'O'
     }
+    setMoveLocations([...moveLocations, {row: nextSquares[i].row, col: nextSquares[i].col}])
     onPlay(nextSquares)
   }
 
@@ -36,9 +37,9 @@ function Board({ xIsNext, squares, onPlay }) {
     ];
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i];
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      if (squares[a].val && squares[a].val === squares[b].val && squares[a].val === squares[c].val) {
         victoryLines = lines[i]
-        return squares[a];
+        return squares[a].val;
       }
     }
     return null;
@@ -46,7 +47,7 @@ function Board({ xIsNext, squares, onPlay }) {
 
   function isDraw() {
     for (let i = 0; i<9; i++) {
-      if (!squares[i]) {
+      if (!squares[i].val) {
         return false
       }
     }
@@ -69,7 +70,12 @@ function Board({ xIsNext, squares, onPlay }) {
     {rows.map(row => (
         <div key={row} className="board-row">
           {rows.map((col, colId) => (
-            <Square key={colId} shouldHighlight={victoryLines && victoryLines.includes(colId+row)} value={squares[colId+row]} onSquareClick={() => handleClick(colId+row)} />
+            <Square
+              key={colId}
+              shouldHighlight={victoryLines && victoryLines.includes(colId+row)}
+              value={squares[colId+row].val}
+              onSquareClick={() => handleClick(colId+row)}
+            />
           ))}
         </div>
       )
@@ -77,10 +83,23 @@ function Board({ xIsNext, squares, onPlay }) {
   </>;
 }
 
+const startingSquares = [
+  {val: null, row: 0, col: 0},
+  {val: null, row: 0, col: 1},
+  {val: null, row: 0, col: 2},
+  {val: null, row: 1, col: 0},
+  {val: null, row: 1, col: 1},
+  {val: null, row: 1, col: 2},
+  {val: null, row: 2, col: 0},
+  {val: null, row: 2, col: 1},
+  {val: null, row: 2, col: 2},
+]
+
 export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)])
+  const [history, setHistory] = useState([startingSquares])
   const [currentMove, setCurrentMove] = useState(0)
   const [moveOrder, setMoveOrder] = useState(true)
+  const [moveLocations, setMoveLocations] = useState([])
   const xIsNext = currentMove % 2 === 0
   const currentSquares = history[currentMove]
 
@@ -107,9 +126,11 @@ export default function Game() {
     } else {
       description = 'Go to game start';
     }
+    console.log(moveLocations[move])
     return (
       <li key={move}>
         {move === currentMove ? <span>{description}</span> : <button onClick={() => jumpTo(move)}>{description}</button>}
+        <span>{!moveLocations[move] ? null : `(${moveLocations[move].row}, ${moveLocations[move].col})`}</span>
       </li>
     )
   })
@@ -117,7 +138,13 @@ export default function Game() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        <Board
+          xIsNext={xIsNext}
+          squares={currentSquares}
+          onPlay={handlePlay}
+          moveLocations={moveLocations}
+          setMoveLocations={setMoveLocations}
+        />
       </div>
       <div className="game-info">
         <div>
