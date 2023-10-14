@@ -9,9 +9,8 @@ function Square({ value, onSquareClick, isHighlight }) {
 }
 
 function Board({ xIsNext, squares, onPlay, moveLocations, setMoveLocations }) {
-  let victoryLines = null
   function handleClick(i) {
-    if (squares[i].val || calculateWinner()) {
+    if (squares[i].val || calculateWinner(squares)) {
       return
     }
     const nextSquares = squares.slice()
@@ -24,41 +23,14 @@ function Board({ xIsNext, squares, onPlay, moveLocations, setMoveLocations }) {
     onPlay(nextSquares)
   }
 
-  function calculateWinner() {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6]
-    ];
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
-      if (squares[a].val && squares[a].val === squares[b].val && squares[a].val === squares[c].val) {
-        victoryLines = lines[i]
-        return squares[a].val;
-      }
-    }
-    return null;
-  }
-
-  function isDraw() {
-    for (let i = 0; i<9; i++) {
-      if (!squares[i].val) {
-        return false
-      }
-    }
-    return true
-  }
-
-  const winner = calculateWinner();
+  const winner = calculateWinner(squares);
   let status;
+  let victoryLines;
   if (winner) {
-    status = "Winner: " + winner;
-  } else if (isDraw()) {
+    const [winnerValue, lines] = winner
+    status = "Winner: " + winnerValue;
+    victoryLines = lines
+  } else if (isDraw(squares)) {
     status = "Game ends in a draw 🐱!"
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
@@ -126,7 +98,6 @@ export default function Game() {
     } else {
       description = 'Go to game start';
     }
-    console.log(moveLocations[move])
     return (
       <li key={move}>
         {move === currentMove ? <span>{description}</span> : <button onClick={() => jumpTo(move)}>{description}</button>}
@@ -155,4 +126,35 @@ export default function Game() {
       </div>
     </div>
   )
+}
+
+function calculateWinner(squares) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
+
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (squares[a].val && squares[a].val === squares[b].val && squares[a].val === squares[c].val) {
+      // victoryLines = lines[i]
+      return [squares[a].val, lines[i]];
+    }
+  }
+  return null;
+}
+
+function isDraw(squares) {
+  for (let i = 0; i<9; i++) {
+    if (!squares[i].val) {
+      return false
+    }
+  }
+  return true
 }
