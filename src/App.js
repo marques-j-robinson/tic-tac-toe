@@ -63,35 +63,11 @@ function Board({ xIsNext, squares, onPlay, addMoveLocation }) {
   </>;
 }
 
-export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)])
-  const [currentMove, setCurrentMove] = useState(0)
+function GameInfo({ history, locations, currentMove, jumpTo }) {
   const [moveOrder, setMoveOrder] = useState(true)
-  const [locations, setLocations] = useState([])
-  const xIsNext = currentMove % 2 === 0
-  const currentSquares = history[currentMove]
-
-  function handlePlay(nextSquares) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares]
-    setHistory(nextHistory)
-    setCurrentMove(nextHistory.length - 1)
-  }
-
-  function jumpTo(nextMove) {
-    setCurrentMove(nextMove)
-  }
 
   function toggleMoveOrder() {
     setMoveOrder(!moveOrder)
-  }
-
-  function addMoveLocation(newLocation) {
-    if (!locations[currentMove]) {
-      setLocations([...locations, newLocation])
-      return
-    }
-    locations[currentMove] = newLocation
-    setLocations([...locations])
   }
 
   const moves = history.map((squares, move) => {
@@ -111,6 +87,41 @@ export default function Game() {
     )
   })
   
+  return <div className="game-info">
+    <div>
+      <button onClick={toggleMoveOrder}>Toggle Move Order</button>
+      <span>{moveOrder?'ASC':'DESC'}</span>
+    </div>
+    <ol>{moveOrder?moves:moves.reverse()}</ol>
+  </div>
+}
+
+export default function Game() {
+  const [history, setHistory] = useState([Array(9).fill(null)])
+  const [currentMove, setCurrentMove] = useState(0)
+  const [locations, setLocations] = useState([])
+  const xIsNext = currentMove % 2 === 0
+  const currentSquares = history[currentMove]
+
+  function handlePlay(nextSquares) {
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares]
+    setHistory(nextHistory)
+    setCurrentMove(nextHistory.length - 1)
+  }
+
+  function jumpTo(nextMove) {
+    setCurrentMove(nextMove)
+  }
+
+  function addMoveLocation(newLocation) {
+    if (!locations[currentMove]) {
+      setLocations([...locations, newLocation])
+      return
+    }
+    locations[currentMove] = newLocation
+    setLocations([...locations])
+  }
+  
   return (
     <div className="game">
       <div className="game-board">
@@ -121,13 +132,7 @@ export default function Game() {
           addMoveLocation={addMoveLocation}
         />
       </div>
-      <div className="game-info">
-        <div>
-          <button onClick={toggleMoveOrder}>Toggle Move Order</button>
-          <span>{moveOrder?'ASC':'DESC'}</span>
-        </div>
-        <ol>{moveOrder?moves:moves.reverse()}</ol>
-      </div>
+      <GameInfo history={history} locations={locations} currentMove={currentMove} jumpTo={jumpTo} />
     </div>
   )
 }
