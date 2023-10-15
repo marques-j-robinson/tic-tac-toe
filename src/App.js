@@ -9,6 +9,23 @@ function Square({ value, onSquareClick, isHighlight }) {
 }
 
 function Board({ xIsNext, squares, onPlay, addMoveLocation }) {
+  const winner = calculateWinner(squares);
+  let status;
+  let victoryLines;
+  if (winner) {
+    const [winnerValue, lines] = winner
+    status = "Winner: " + winnerValue;
+    victoryLines = lines
+  } else if (isDraw(squares)) {
+    status = "Game ends in a draw 🐱!"
+  } else {
+    status = "Next player: " + (xIsNext ? "X" : "O");
+  }
+
+  function checkIsHighlight(boardId) {
+    return victoryLines && victoryLines.includes(boardId)
+  }
+
   function addMoveToBoard(boardId) {
     if (squares[boardId] || calculateWinner(squares)) {
       return
@@ -27,36 +44,22 @@ function Board({ xIsNext, squares, onPlay, addMoveLocation }) {
     addMoveToBoard(getBoardId(row, col))
   }
 
-  const winner = calculateWinner(squares);
-  let status;
-  let victoryLines;
-  if (winner) {
-    const [winnerValue, lines] = winner
-    status = "Winner: " + winnerValue;
-    victoryLines = lines
-  } else if (isDraw(squares)) {
-    status = "Game ends in a draw 🐱!"
-  } else {
-    status = "Next player: " + (xIsNext ? "X" : "O");
-  }
-
   const boardIds = [0, 1, 2]
   return <>
     <div className="status">{status}</div>
-    {boardIds.map(rowId => {
-      return (
+    {boardIds.map(rowId => (
         <div key={rowId} className="board-row">
           {boardIds.map(colId => (
             <Square
               key={colId}
               value={squares[getBoardId(rowId, colId)]}
               onSquareClick={() => handleClick(rowId, colId)}
-              isHighlight={victoryLines && victoryLines.includes(getBoardId(rowId, colId))}
+              isHighlight={checkIsHighlight(getBoardId(rowId, colId))}
             />
           ))}
         </div>
       )
-    })}
+    )}
   </>;
 }
 
