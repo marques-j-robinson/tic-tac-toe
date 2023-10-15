@@ -8,8 +8,9 @@ function Square({ value, onSquareClick, isHighlight }) {
   )
 }
 
-function Board({ xIsNext, squares, onPlay }) {
+function Board({ xIsNext, squares, onPlay, addMoveLocation }) {
   function handleClick(row, col) {
+    addMoveLocation({row, col})
     const boardId = getBoardId(row, col)
     if (squares[boardId] || calculateWinner(squares)) {
       return
@@ -20,7 +21,7 @@ function Board({ xIsNext, squares, onPlay }) {
     } else {
       nextSquares[boardId] = 'O'
     }
-    onPlay(nextSquares, row, col)
+    onPlay(nextSquares)
   }
 
   const winner = calculateWinner(squares);
@@ -60,15 +61,14 @@ export default function Game() {
   const [history, setHistory] = useState([Array(9).fill(null)])
   const [currentMove, setCurrentMove] = useState(0)
   const [moveOrder, setMoveOrder] = useState(true)
-  const [moveLocations, setMoveLocations] = useState([])
+  const [locations, setLocations] = useState([])
   const xIsNext = currentMove % 2 === 0
   const currentSquares = history[currentMove]
 
-  function handlePlay(nextSquares, row, col) {
+  function handlePlay(nextSquares) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares]
     setHistory(nextHistory)
     setCurrentMove(nextHistory.length - 1)
-    setMoveLocations([...moveLocations, {row, col}])
   }
 
   function jumpTo(nextMove) {
@@ -77,6 +77,15 @@ export default function Game() {
 
   function toggleMoveOrder() {
     setMoveOrder(!moveOrder)
+  }
+
+  function addMoveLocation(newLocation) {
+    if (!locations[currentMove]) {
+      setLocations([...locations, newLocation])
+      return
+    }
+    locations[currentMove] = newLocation
+    setLocations([...locations])
   }
 
   const moves = history.map((squares, move) => {
@@ -91,7 +100,7 @@ export default function Game() {
     return (
       <li key={move}>
         {move === currentMove ? <span>{description}</span> : <button onClick={() => jumpTo(move)}>{description}</button>}
-        <span>{!moveLocations[move] ? null : `(${moveLocations[move].row}, ${moveLocations[move].col})`}</span>
+        <span>{move===0 || !locations[move-1] ? null : `(${locations[move-1].row}, ${locations[move-1].col})`}</span>
       </li>
     )
   })
@@ -99,7 +108,12 @@ export default function Game() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        <Board
+          xIsNext={xIsNext}
+          squares={currentSquares}
+          onPlay={handlePlay}
+          addMoveLocation={addMoveLocation}
+        />
       </div>
       <div className="game-info">
         <div>
