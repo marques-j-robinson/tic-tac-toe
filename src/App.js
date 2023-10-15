@@ -8,7 +8,7 @@ function Square({ value, onSquareClick, isHighlight }) {
   )
 }
 
-function Board({ xIsNext, squares, onPlay, moveLocations, setMoveLocations }) {
+function Board({ xIsNext, squares, onPlay }) {
   function handleClick(row, col) {
     const boardId = getBoardId(row, col)
     if (squares[boardId] || calculateWinner(squares)) {
@@ -20,8 +20,7 @@ function Board({ xIsNext, squares, onPlay, moveLocations, setMoveLocations }) {
     } else {
       nextSquares[boardId] = 'O'
     }
-    setMoveLocations([...moveLocations, {row, col}])
-    onPlay(nextSquares)
+    onPlay(nextSquares, row, col)
   }
 
   const winner = calculateWinner(squares);
@@ -65,10 +64,11 @@ export default function Game() {
   const xIsNext = currentMove % 2 === 0
   const currentSquares = history[currentMove]
 
-  function handlePlay(nextSquares) {
+  function handlePlay(nextSquares, row, col) {
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares]
     setHistory(nextHistory)
     setCurrentMove(nextHistory.length - 1)
+    setMoveLocations([...moveLocations, {row, col}])
   }
 
   function jumpTo(nextMove) {
@@ -99,13 +99,7 @@ export default function Game() {
   return (
     <div className="game">
       <div className="game-board">
-        <Board
-          xIsNext={xIsNext}
-          squares={currentSquares}
-          onPlay={handlePlay}
-          moveLocations={moveLocations}
-          setMoveLocations={setMoveLocations}
-        />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
       </div>
       <div className="game-info">
         <div>
