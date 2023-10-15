@@ -9,9 +9,7 @@ function Square({ value, onSquareClick, isHighlight }) {
 }
 
 function Board({ xIsNext, squares, onPlay, addMoveLocation }) {
-  function handleClick(row, col) {
-    addMoveLocation({row, col})
-    const boardId = getBoardId(row, col)
+  function addMoveToBoard(boardId) {
     if (squares[boardId] || calculateWinner(squares)) {
       return
     }
@@ -22,6 +20,11 @@ function Board({ xIsNext, squares, onPlay, addMoveLocation }) {
       nextSquares[boardId] = 'O'
     }
     onPlay(nextSquares)
+  }
+
+  function handleClick(row, col) {
+    addMoveLocation({row, col})
+    addMoveToBoard(getBoardId(row, col))
   }
 
   const winner = calculateWinner(squares);
