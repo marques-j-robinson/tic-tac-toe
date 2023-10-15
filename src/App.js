@@ -9,17 +9,18 @@ function Square({ value, onSquareClick, isHighlight }) {
 }
 
 function Board({ xIsNext, squares, onPlay, moveLocations, setMoveLocations }) {
-  function handleClick(i) {
-    if (squares[i].val || calculateWinner(squares)) {
+  function handleClick(row, col) {
+    const boardId = getBoardId(row, col)
+    if (squares[boardId] || calculateWinner(squares)) {
       return
     }
     const nextSquares = squares.slice()
     if (xIsNext) {
-      nextSquares[i].val = 'X'
+      nextSquares[boardId] = 'X'
     } else {
-      nextSquares[i].val = 'O'
+      nextSquares[boardId] = 'O'
     }
-    setMoveLocations([...moveLocations, {row: nextSquares[i].row, col: nextSquares[i].col}])
+    setMoveLocations([...moveLocations, {row, col}])
     onPlay(nextSquares)
   }
 
@@ -36,39 +37,28 @@ function Board({ xIsNext, squares, onPlay, moveLocations, setMoveLocations }) {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
 
-  const rows = [0, 3, 6]
+  const boardIds = [0, 1, 2]
   return <>
     <div className="status">{status}</div>
-    {rows.map(row => (
-        <div key={row} className="board-row">
-          {rows.map((col, colId) => (
+    {boardIds.map(rowId => {
+      return (
+        <div key={rowId} className="board-row">
+          {boardIds.map(colId => (
             <Square
               key={colId}
-              value={squares[colId+row].val}
-              onSquareClick={() => handleClick(colId+row)}
-              isHighlight={victoryLines && victoryLines.includes(colId+row)}
+              value={squares[getBoardId(rowId, colId)]}
+              onSquareClick={() => handleClick(rowId, colId)}
+              isHighlight={victoryLines && victoryLines.includes(getBoardId(rowId, colId))}
             />
           ))}
         </div>
       )
-    )}
+    })}
   </>;
 }
 
-const startingSquares = [
-  {val: null, row: 0, col: 0},
-  {val: null, row: 0, col: 1},
-  {val: null, row: 0, col: 2},
-  {val: null, row: 1, col: 0},
-  {val: null, row: 1, col: 1},
-  {val: null, row: 1, col: 2},
-  {val: null, row: 2, col: 0},
-  {val: null, row: 2, col: 1},
-  {val: null, row: 2, col: 2},
-]
-
 export default function Game() {
-  const [history, setHistory] = useState([startingSquares])
+  const [history, setHistory] = useState([Array(9).fill(null)])
   const [currentMove, setCurrentMove] = useState(0)
   const [moveOrder, setMoveOrder] = useState(true)
   const [moveLocations, setMoveLocations] = useState([])
@@ -142,8 +132,8 @@ function calculateWinner(squares) {
 
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
-    if (squares[a].val && squares[a].val === squares[b].val && squares[a].val === squares[c].val) {
-      return [squares[a].val, lines[i]];
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return [squares[a], lines[i]];
     }
   }
   return null;
@@ -151,9 +141,13 @@ function calculateWinner(squares) {
 
 function isDraw(squares) {
   for (let i = 0; i<9; i++) {
-    if (!squares[i].val) {
+    if (!squares[i]) {
       return false
     }
   }
   return true
+}
+
+function getBoardId(row, col) {
+  return row*3+col
 }
