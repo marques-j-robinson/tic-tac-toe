@@ -9,7 +9,7 @@ export default function Home() {
   useEffect(() => {
     fetch('http://localhost:5000/games')
       .then(res => res.json())
-      .then(data => setGames(data))
+      .then(({data}) => setGames(data))
   }, [])
 
   function handleCreateNewGame(e) {
@@ -21,9 +21,9 @@ export default function Home() {
       },
       body: JSON.stringify({name: newName}),
     }).then(res => res.json())
-    .then(({success, games:newGames, msg}) => {
+    .then(({success, data, msg}) => {
       if (success) {
-        setGames(newGames)
+        setGames(data)
         setNewName("")
         setErrorMsg(null)
       }
@@ -34,18 +34,17 @@ export default function Home() {
   }
   
   function handleRemoveGame(gameId) {
-      fetch(`http://localhost:5000/game/${gameId}`, {method: "DELETE"})
+      fetch(`http://localhost:5000/games/${gameId}`, {method: "DELETE"})
         .then(res => res.json())
-        .then(({success, games:newGames, msg}) => {
+        .then(({success, data, msg}) => {
           if (success) {
-            setGames(newGames)
+            setGames(data)
             setErrorMsg(null)
           }
           if (!success) setErrorMsg(msg)
         })
   }
-
-
+  
   return <>
     {errorMsg ? <p className="error">{errorMsg}</p> : null}
     <input placeholder='New Game Name' value={newName} onChange={e => setNewName(e.target.value)} />
