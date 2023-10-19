@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react'
-import Game from './Components/Game.jsx'
+import GamesList from './Components/GamesList.jsx'
 
 export default function Home() {
   const [games, setGames] = useState([])
@@ -7,10 +7,10 @@ export default function Home() {
   useEffect(() => {
     fetch('http://localhost:5000/games')
       .then(res => res.json())
-      .then(data => console.log(data))
-  }, [games])
+      .then(data => setGames(data))
+  }, [])
 
   return <>
-    <Game />
+    <GamesList games={games} />
   </>
 }
