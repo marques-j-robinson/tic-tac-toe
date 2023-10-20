@@ -1,54 +1,43 @@
 import {useState, useEffect} from 'react'
 import GamesList from './Components/GamesList.jsx'
+import Game from './Components/Game.jsx'
 
 export default function Home() {
   const [games, setGames] = useState([])
-  const [errorMsg, setErrorMsg] = useState("")
-  const [newName, setNewName] = useState("")
+  const [playing, setPlaying] = useState(false)
 
   useEffect(() => {
     fetch('http://localhost:5000/games')
       .then(res => res.json())
-      .then(({data}) => setGames(data))
+      .then(({data}) => setGames(data.games))
   }, [])
 
   function handleCreateNewGame(e) {
     e.preventDefault()
-    fetch('http://localhost:5000/games', {
-      method: 'POST',
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-      body: JSON.stringify({name: newName}),
-    }).then(res => res.json())
-    .then(({success, data, msg}) => {
+    fetch('http://localhost:5000/game', { method: 'POST' })
+    .then(res => res.json())
+    .then(({success, data}) => {
       if (success) {
-        setGames(data)
-        setNewName("")
-        setErrorMsg(null)
-      }
-      if (!success) {
-        setErrorMsg(msg)
+        const {id} = data
+        setPlaying(true)
       }
     })
   }
   
-  function handleRemoveGame(gameId) {
-      fetch(`http://localhost:5000/games/${gameId}`, {method: "DELETE"})
-        .then(res => res.json())
-        .then(({success, data, msg}) => {
-          if (success) {
-            setGames(data)
-            setErrorMsg(null)
-          }
-          if (!success) setErrorMsg(msg)
-        })
+  function handleRemoveGame(id) {
+      fetch(`http://localhost:5000/game/${id}`, {method: "DELETE"})
+  }
+
+  const HomeDisplay = () => {
+    return <>
+      <button onClick={handleCreateNewGame}>Create New Game</button>
+      <GamesList games={games} handleRemoveGame={handleRemoveGame} />
+    </>
   }
   
   return <>
-    {errorMsg ? <p className="error">{errorMsg}</p> : null}
-    <input placeholder='New Game Name' value={newName} onChange={e => setNewName(e.target.value)} />
-    <button onClick={handleCreateNewGame}>Create New Game</button>
-    <GamesList games={games} handleRemoveGame={handleRemoveGame} />
+    {playing
+    ? <Game />
+    : <HomeDisplay />}
   </>
 }
