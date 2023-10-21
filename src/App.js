@@ -6,26 +6,34 @@ export default function Home() {
   const [games, setGames] = useState([])
   const [playing, setPlaying] = useState(false)
 
-  useEffect(() => {
+  function getAllGames() {
     fetch('http://localhost:5000/games')
       .then(res => res.json())
       .then(({data}) => setGames(data.games))
+  }
+
+  useEffect(() => {
+      getAllGames()
   }, [])
 
-  function handleCreateNewGame(e) {
+  async function handleCreateNewGame(e) {
     e.preventDefault()
-    fetch('http://localhost:5000/game', { method: 'POST' })
-    .then(res => res.json())
-    .then(({success, data}) => {
-      if (success) {
-        const {id} = data
-        setPlaying(true)
-      }
-    })
+    const res = await fetch('http://localhost:5000/game', { method: 'POST' })
+    const {success, data} = await res.json()
+    if (success) {
+      const {id} = data
+      setPlaying(true)
+    }
   }
-  
-  function handleRemoveGame(id) {
-      fetch(`http://localhost:5000/game/${id}`, {method: "DELETE"})
+
+  async function handleDisplayHome() {
+    setPlaying(false)
+    await getAllGames()
+  }
+
+  async function handleRemoveGame(id) {
+      await fetch(`http://localhost:5000/game/${id}`, {method: "DELETE"})
+      await getAllGames()
   }
 
   const HomeDisplay = () => {
@@ -34,10 +42,17 @@ export default function Home() {
       <GamesList games={games} handleRemoveGame={handleRemoveGame} />
     </>
   }
-  
+
+  const GameDisplay = () => {
+    return <>
+        <button onClick={handleDisplayHome}>Home</button>
+        <Game />
+    </>
+  }
+
   return <>
     {playing
-    ? <Game />
+    ? <GameDisplay />
     : <HomeDisplay />}
   </>
 }
