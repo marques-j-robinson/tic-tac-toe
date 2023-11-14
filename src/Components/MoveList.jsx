@@ -13,22 +13,17 @@ function MoveListButton({move, jumpTo}) {
 export default function MoveList({history, currentMove, jumpTo}) {
   const [ascOrder, setAscOrder] = useState(false)
 
-  function handleClick() {
-    setAscOrder(!ascOrder)
-    if (!ascOrder) {
-      history.reverse()
-    }
-  }
-
-  return <>
-    <button onClick={handleClick}>Toggle Order</button>
-    <ul>{history.map((square, move) => (
-      <li key={move}>
-        {move === currentMove
+  const moves = history.map((square, move) => (
+    <li key={move}>
+      {move === currentMove
         ? <span>You are at move #{move}</span>
         : <MoveListButton move={move} jumpTo={jumpTo} />
-        }
-      </li>
-    ))}</ul>
+      }
+    </li>
+  ))
+
+  return <>
+    <button onClick={() => setAscOrder(!ascOrder)}>Toggle Order</button>
+    <ul>{ascOrder?moves:moves.reverse()}</ul>
   </>
 }
