@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 function MoveListButton({move, jumpTo}) {
   let description;
   if (move > 0) {
@@ -9,6 +11,8 @@ function MoveListButton({move, jumpTo}) {
 }
 
 export default function MoveList({history, currentMove, jumpTo}) {
+  const [ascOrder, setAscOrder] = useState(false)
+
   return <ol>{history.map((square, move) => (
     <li key={move}>
       {move === currentMove
