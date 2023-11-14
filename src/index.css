@@ -107,6 +107,7 @@ body {
 
 .game-info ul {
   list-style-type: none;
+  padding: 0;
 }
 
 .game-list-item {
