@@ -95,6 +95,12 @@ body {
   flex-direction: row;
 }
 
+.game-board-items {
+  display: grid;
+  gap: 5px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
 .game-info {
   margin-left: 20px;
 }
