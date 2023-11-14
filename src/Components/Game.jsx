@@ -2,8 +2,8 @@ import {useState} from 'react'
 import Board from './Board.jsx'
 import GameInfo from './GameInfo.jsx'
 
-export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)])
+export default function Game({gameHistory}) {
+  const [history, setHistory] = useState([gameHistory])
   const [currentMove, setCurrentMove] = useState(0)
   const [locations, setLocations] = useState([])
   const xIsNext = currentMove % 2 === 0
@@ -27,7 +27,7 @@ export default function Game() {
     locations[currentMove] = newLocation
     setLocations([...locations])
   }
-  
+
   return (
     <div className="game">
       <div className="game-board">

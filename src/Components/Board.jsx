@@ -1,6 +1,7 @@
 import Square from './Square.jsx'
 
 export default function Board({ xIsNext, squares, onPlay, addMoveLocation }) {
+    console.log(squares)
   const winner = calculateWinner(squares);
   let status;
   let victoryLines;
