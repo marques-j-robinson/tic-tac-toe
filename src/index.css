@@ -105,6 +105,10 @@ body {
   margin-left: 20px;
 }
 
+.game-info ul {
+  list-style-type: none;
+}
+
 .game-list-item {
   display: flex;
   flex-direction: row;
