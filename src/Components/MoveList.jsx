@@ -1,4 +1,4 @@
-function MoveListItem({move, jumpTo}) {
+function MoveListButton({move, jumpTo}) {
   let description;
   if (move > 0) {
     description = 'Go to move #' + move;
@@ -8,10 +8,13 @@ function MoveListItem({move, jumpTo}) {
   return <button onClick={() => jumpTo(move)}>{description}</button>
 }
 
-export default function MoveList({history, jumpTo}) {
+export default function MoveList({history, currentMove, jumpTo}) {
   return <ol>{history.map((square, move) => (
     <li key={move}>
-      <MoveListItem move={move} jumpTo={jumpTo} />
+      {move === currentMove
+      ? <span>You are at move #{move}</span>
+      : <MoveListButton move={move} jumpTo={jumpTo} />
+      }
     </li>
   ))}</ol>
 }
