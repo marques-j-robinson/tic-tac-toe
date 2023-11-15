@@ -46,7 +46,12 @@ export default function Board({ xIsNext, squares, onPlay }) {
     <>
       <div className="status">{status}</div>
       <div className="game-board-items">
-        {squares.map((_, i) => <Square key={i} value={squares[i]} onSquareClick={() => handleClick(i)} />)}
+        {squares.map((_, i) => <Square
+          key={i}
+          value={squares[i]}
+          onSquareClick={() => handleClick(i)}
+          highlight={victoryLines && victoryLines.includes(i)}
+        />)}
       </div>
     </>
   );
