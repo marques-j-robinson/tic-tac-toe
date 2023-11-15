@@ -13,10 +13,13 @@ export default function Game() {
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
   }
+  function isDraw() {
+    return history.length === 10
+  }
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} isDraw={isDraw} />
       </div>
       <div className="game-info">
         <MoveList history={history} currentMove={currentMove} jumpTo={setCurrentMove} />

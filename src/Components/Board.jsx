@@ -21,7 +21,7 @@ function calculateWinner(squares) {
   return null;
 }
 
-export default function Board({ xIsNext, squares, onPlay }) {
+export default function Board({ xIsNext, squares, onPlay, isDraw }) {
   function handleClick(i) {
     if (squares[i] || calculateWinner(squares)) return
     const nextSquares = squares.slice();
@@ -39,6 +39,8 @@ export default function Board({ xIsNext, squares, onPlay }) {
     const {winner, linesIdx} = isGameOver
     status = "Winner: " + winner;
     victoryLines = lines[linesIdx]
+  } else if (isDraw()) {
+    status = "Draw 🐱!"
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
