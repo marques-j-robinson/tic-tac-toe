@@ -11,7 +11,7 @@ function MoveListButton({move, jumpTo}) {
 }
 
 export default function MoveList({history, currentMove, jumpTo}) {
-  const [ascOrder, setAscOrder] = useState(false)
+  const [ascOrder, setAscOrder] = useState(true)
 
   const moves = history.map((square, move) => (
     <li key={move}>
