@@ -29,13 +29,17 @@ export default function Game() {
   function isDraw() {
     return history.length === 10
   }
+  function addLocation(boardId) {
+      setLocations([...locations, locationMappings[boardId]])
+      console.log(locations)
+  }
   return (
     <div className="game">
       <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} isDraw={isDraw} />
+        <Board xIsNext={xIsNext} squares={currentSquares} addLocation={addLocation} onPlay={handlePlay} isDraw={isDraw} />
       </div>
       <div className="game-info">
-        <MoveList history={history} currentMove={currentMove} jumpTo={setCurrentMove} />
+        <MoveList history={history} currentMove={currentMove} jumpTo={setCurrentMove} locations={locations} />
       </div>
     </div>
   );

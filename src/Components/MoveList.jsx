@@ -10,7 +10,7 @@ function MoveListButton({move, jumpTo}) {
   return <button onClick={() => jumpTo(move)}>{description}</button>
 }
 
-export default function MoveList({history, currentMove, jumpTo}) {
+export default function MoveList({history, currentMove, jumpTo, locations}) {
   const [ascOrder, setAscOrder] = useState(true)
 
   const moves = history.map((square, move) => (
@@ -19,6 +19,7 @@ export default function MoveList({history, currentMove, jumpTo}) {
         ? <span>You are at move #{move}</span>
         : <MoveListButton move={move} jumpTo={jumpTo} />
       }
+      {move !== 0 ? <span>&nbsp;({locations[move-1]})</span> : null}
     </li>
   ))
 

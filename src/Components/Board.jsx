@@ -21,7 +21,7 @@ function calculateWinner(squares) {
   return null;
 }
 
-export default function Board({ xIsNext, squares, onPlay, isDraw }) {
+export default function Board({ xIsNext, squares, addLocation, onPlay, isDraw }) {
   function handleClick(i) {
     if (squares[i] || calculateWinner(squares)) return
     const nextSquares = squares.slice();
@@ -30,6 +30,7 @@ export default function Board({ xIsNext, squares, onPlay, isDraw }) {
     } else {
       nextSquares[i] = "O";
     }
+    addLocation(i)
     onPlay(nextSquares);
   }
   const isGameOver = calculateWinner(squares);
