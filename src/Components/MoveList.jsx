@@ -1,5 +1,17 @@
 import { useState } from 'react'
 
+const locationMappings = [
+    '0,0',
+    '0,1',
+    '0,2',
+    '1,0',
+    '1,1',
+    '1,2',
+    '2,0',
+    '2,1',
+    '2,2',
+]
+
 function MoveListButton({move, jumpTo}) {
   let description;
   if (move > 0) {
@@ -19,7 +31,7 @@ export default function MoveList({history, currentMove, jumpTo, locations}) {
         ? <span>You are at move #{move}</span>
         : <MoveListButton move={move} jumpTo={jumpTo} />
       }
-      {move !== 0 ? <span>&nbsp;({locations[move-1]})</span> : null}
+      {move !== 0 ? <span>&nbsp;({locationMappings[locations[move-1]]})</span> : null}
     </li>
   ))
 
