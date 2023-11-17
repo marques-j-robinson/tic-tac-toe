@@ -31,7 +31,6 @@ export default function Game() {
   }
   function addLocation(boardId) {
       setLocations([...locations, locationMappings[boardId]])
-      console.log(locations)
   }
   return (
     <div className="game">
